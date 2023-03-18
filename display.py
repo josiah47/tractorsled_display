@@ -59,6 +59,7 @@ class Timer(QWidget):
 		self.setGeometry(100, 100, 300, 200)
 		self.setWindowTitle('Timers')
 		#self.show()
+		self.setWindowFlags(Qt.FramelessWindowHint)
 		self.showMaximized()
 
 	def updatespeedLCD(self):
@@ -70,7 +71,6 @@ class Timer(QWidget):
 
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
-
 	timer = Timer()
 
 	def updateLCD():
