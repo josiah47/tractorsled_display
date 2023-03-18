@@ -32,7 +32,7 @@ class Timer(QWidget):
 		speedLCD.display(5.14)
 
 		distanceLCD = QLCDNumber(self)
-		distanceLCD.setStyleSheet("color: red")
+		distanceLCD.setStyleSheet("color: #FF0000")
 		distanceLCD.setDigitCount(7)
 		distanceLCD.display(123)
 
@@ -45,28 +45,18 @@ class Timer(QWidget):
 		self.speedLCD = speedLCD
 		self.distanceLCD = distanceLCD
 
-		self.speedLCDValue = 0
-		self.distanceLCDValue = 0
-
-		self.speedLCDTimer = QTimer(self)
-		self.speedLCDTimer.timeout.connect(self.updatespeedLCD)
-		self.speedLCDTimer.start(50)
-
-		self.distanceLCDTimer = QTimer(self)
-		self.distanceLCDTimer.timeout.connect(self.updatedistanceLCD)
-		self.distanceLCDTimer.start(50)
-
 		self.setGeometry(100, 100, 300, 200)
 		self.setWindowTitle('Timers')
 		#self.show()
 		self.setWindowFlags(Qt.FramelessWindowHint)
+		self.setCursor(Qt.BlankCursor)
 		self.showMaximized()
 
-	def updatespeedLCD(self):
-		self.speedLCD.display(self.speedLCDValue)
+	def updateSpeedLCD(self,value):
+		self.speedLCD.display(value)
 
-	def updatedistanceLCD(self):
-		self.distanceLCD.display(self.distanceLCDValue)
+	def updateDistanceLCD(self,value):
+		self.distanceLCD.display(value)
 
 
 if __name__ == '__main__':
@@ -79,8 +69,8 @@ if __name__ == '__main__':
 		# check for packet rx
 		packet = rfm69.receive()
 		if packet is None:
-			timer.speedLCDValue = 0
-			timer.distanceLCDValue = 0
+			timer.updateSpeedLCD(0)
+			timer.updateDistanceLCD(0)
 		else:
 			# Display the packet text and rssi
 			prev_packet = packet
@@ -88,13 +78,11 @@ if __name__ == '__main__':
 			#print(packet_text)
 			result = re.search(r"[Ss]([0-9]+)[Dd]([0-9]+)", packet_text)
 			#print(result.groups())
-			timer.speedLCDValue = format( float(result.group(1))/100.00, '.2f')
-			timer.distanceLCDValue = format( float(result.group(2))/100.00, '.2f')
-			print(timer.speedLCDValue)
-			print(timer.distanceLCDValue)
+			timer.updateSpeedLCD( format( float(result.group(1))/100.00, '.2f') )
+			timer.updateDistanceLCD( format( float(result.group(2))/100.00, '.2f') )
 
 	updateTimer = QTimer(app)
 	updateTimer.timeout.connect(updateLCD)
-	updateTimer.start(10)
+	updateTimer.start(100)
 
 	sys.exit(app.exec_())
