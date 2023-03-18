@@ -58,6 +58,7 @@ class Timer(QWidget):
 
 		self.setGeometry(100, 100, 300, 200)
 		self.setWindowTitle('Timers')
+		#self.show()
 		self.showMaximized()
 
 	def updatespeedLCD(self):
@@ -84,10 +85,13 @@ if __name__ == '__main__':
 			# Display the packet text and rssi
 			prev_packet = packet
 			packet_text = str(prev_packet, "utf-8")
-
-			result = re.search(r"[Ss]([0-9]+)[Dd](0-9]+)", target_string)
-			timer.speedLCDValue = result.group(1)
-			timer.distanceLCDValue = result.group(2)
+			#print(packet_text)
+			result = re.search(r"[Ss]([0-9]+)[Dd]([0-9]+)", packet_text)
+			#print(result.groups())
+			timer.speedLCDValue = format( float(result.group(1))/100.00, '.2f')
+			timer.distanceLCDValue = format( float(result.group(2))/100.00, '.2f')
+			print(timer.speedLCDValue)
+			print(timer.distanceLCDValue)
 
 	updateTimer = QTimer(app)
 	updateTimer.timeout.connect(updateLCD)
